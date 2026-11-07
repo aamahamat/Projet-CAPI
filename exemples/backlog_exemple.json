@@ -1,0 +1,8 @@
+{
+  "projet": "Bibliothèque en ligne",
+  "fonctionnalites": [
+    { "id": "F1", "titre": "Rechercher un livre par titre" },
+    { "id": "F2", "titre": "Emprunter un livre disponible" },
+    { "id": "F3", "titre": "Recevoir un rappel avant la date de retour" }
+  ]
+}

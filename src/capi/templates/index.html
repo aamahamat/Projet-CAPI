@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAPI – Planning poker</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; }
+    section { border: 1px solid #ccc; border-radius: .5rem; padding: 1rem; margin-bottom: 1rem; }
+    button.carte { min-width: 3.5rem; padding: .8rem .4rem; margin: .2rem; font-size: 1.1rem; cursor: pointer; }
+    #message { font-weight: bold; min-height: 1.5rem; }
+    .erreur { color: #b00020; } .ok { color: #1b5e20; }
+    #pseudos input { display: block; margin: .3rem 0; }
+    table { border-collapse: collapse; } td, th { border: 1px solid #ccc; padding: .3rem .8rem; }
+  </style>
+</head>
+<body>
+  <h1>CAPI – Planning poker</h1>
+  <p id="message" role="status"></p>
+
+  <section>
+    <h2>1. Joueurs</h2>
+    <label>Nombre de joueurs :
+      <input type="number" id="nombre" min="2" max="10" value="3">
+    </label>
+    <button id="generer">Saisir les pseudos</button>
+    <div id="pseudos"></div>
+    <button id="valider-joueurs" hidden>Valider les joueurs</button>
+    <ul id="joueurs"></ul>
+  </section>
+
+  <section>
+    <h2>2. Backlog</h2>
+    <input type="file" id="fichier" accept=".json,application/json">
+    <button id="charger">Charger</button>
+    <p id="fonctionnalite">Aucun backlog chargé.</p>
+  </section>
+
+  <section>
+    <h2>3. Vote</h2>
+    <p>Chaque joueur vote à son tour sur cet appareil : choisissez votre pseudo, puis votre carte.</p>
+    <label>Joueur : <select id="choix-joueur"></select></label>
+    <div id="cartes"></div>
+    <button id="reveler">Révéler les votes</button>
+    <table id="resultat" hidden></table>
+  </section>
+
+<script>
+const msg = document.getElementById("message");
+function afficher(texte, ok) { msg.textContent = texte; msg.className = ok ? "ok" : "erreur"; }
+const JSON_HEADERS = {"Content-Type": "application/json"};
+
+async function appel(url, options) {
+  const rep = await fetch(url, options);
+  const data = await rep.json();
+  afficher(data.erreur || data.message || "", rep.ok);
+  await rafraichir();
+  return rep.ok;
+}
+
+async function rafraichir() {
+  const etat = await (await fetch("/api/etat")).json();
+
+  const f = etat.fonctionnalite;
+  document.getElementById("fonctionnalite").textContent = f
+    ? `${etat.projet ? etat.projet + " – " : ""}Fonctionnalité ${etat.numero}/${etat.total} : ${f.id} – ${f.titre}`
+    : "Aucun backlog chargé.";
+
+  const ul = document.getElementById("joueurs"); ul.replaceChildren();
+  const sel = document.getElementById("choix-joueur"); const courant = sel.value; sel.replaceChildren();
+  for (const j of etat.joueurs) {
+    const li = document.createElement("li");
+    li.textContent = `${j.nom} ${j.a_vote ? "✓ a voté" : "…"}`; ul.append(li);
+    const opt = document.createElement("option"); opt.value = opt.textContent = j.nom; sel.append(opt);
+  }
+  if (courant) sel.value = courant;
+
+  const div = document.getElementById("cartes"); div.replaceChildren();
+  for (const c of etat.cartes) {
+    const b = document.createElement("button");
+    b.className = "carte"; b.textContent = c === "cafe" ? "☕" : c;
+    b.disabled = etat.revele;
+    b.onclick = () => appel("/api/vote", {
+      method: "POST", headers: JSON_HEADERS,
+      body: JSON.stringify({joueur: sel.value, carte: c}),
+    });
+    div.append(b);
+  }
+
+  const table = document.getElementById("resultat");
+  table.hidden = !etat.revele; table.replaceChildren();
+  if (etat.revele) {
+    for (const [nom, carte] of Object.entries(etat.votes)) {
+      const tr = table.insertRow();
+      tr.insertCell().textContent = nom;
+      tr.insertCell().textContent = carte === "cafe" ? "☕" : carte;
+    }
+  }
+}
+
+document.getElementById("generer").onclick = () => {
+  const n = parseInt(document.getElementById("nombre").value, 10) || 0;
+  const zone = document.getElementById("pseudos"); zone.replaceChildren();
+  for (let i = 1; i <= n; i++) {
+    const input = document.createElement("input");
+    input.placeholder = `Pseudo du joueur ${i}`; zone.append(input);
+  }
+  document.getElementById("valider-joueurs").hidden = n === 0;
+};
+document.getElementById("valider-joueurs").onclick = () => {
+  const pseudos = [...document.querySelectorAll("#pseudos input")].map(i => i.value);
+  appel("/api/joueurs", {
+    method: "POST", headers: JSON_HEADERS,
+    body: JSON.stringify({nombre: pseudos.length, pseudos}),
+  });
+};
+document.getElementById("charger").onclick = () => {
+  const fichier = document.getElementById("fichier").files[0];
+  const form = new FormData(); if (fichier) form.append("fichier", fichier);
+  appel("/api/backlog", {method: "POST", body: form});
+};
+document.getElementById("reveler").onclick = () => appel("/api/revelation", {method: "POST"});
+rafraichir();
+</script>
+</body>
+</html>
