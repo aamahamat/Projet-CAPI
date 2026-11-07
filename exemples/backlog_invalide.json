@@ -1,7 +1,1 @@
-{
-  "projet": "Bibliothèque en ligne",
-  "fonctionnalites": [
-    { "id": "F1", "titre": "Rechercher un livre par titre" },
-    { "id": "F2" }
-  ]
-}
+
