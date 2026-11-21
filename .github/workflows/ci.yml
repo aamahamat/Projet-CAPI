@@ -1,12 +1,12 @@
 name: CI
 
-# Lance les tests à chaque push et à chaque pull request.
+# Lance les tests à chaque push, à chaque pull request et à chaque worklow_dispatch.
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:
+  workflow_dispatch:  # declencheur qui permet de lancer à la main depuis l'interface github
 
 jobs:
   tests:
