@@ -3,7 +3,10 @@ name: CI
 # Lance les tests à chaque push et à chaque pull request.
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   tests:
