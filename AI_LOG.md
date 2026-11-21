@@ -9,18 +9,30 @@
 |---|---|---|
 | Claude | Sonnet 5.5 | Mode chat |
 
-Fichier d'instructions pour agent versionné (`CLAUDE.md`, `AGENTS.md`...) : <oui : chemin / non>
+Fichier d'instructions pour agent versionné (`CLAUDE.md`, `AGENTS.md`...) : non
 
 ## Entrées
 
-### AAAA-MM-JJ : <tâche en une ligne> (US-xx)
+### 2026-11-07 : Squelette Flask, chargement du backlog JSON et choix d'une carte (US-04, US-06)
 
-- **Demande (résumé fidèle)** : <ce que vous avez demandé, avec le contexte fourni : fichiers, tests...>
+- **Demande (résumé fidèle)** : implémenter US-04 et US-06 avec Flask, à partir de R0.md et R1.md (CU-01 extension 2a, CU-02 étape 1). Aucun code existant fourni.
 - **Résultat** : <accepté tel quel / modifié / rejeté>
-- **Ce que nous avons vérifié** : <tests lancés, lecture ligne à ligne, essai manuel...>
-- **Ce que nous avons changé ou rejeté, et pourquoi** :
+- **Ce que nous avons vérifié** : <ex. : pytest (71 tests), essai manuel dans le navigateur, lecture ligne à ligne>
+- **Ce que nous avons changé ou rejeté, et pourquoi** : <ce que vous avez modifié et la raison, ou « rien »>
 
-### AAAA-MM-JJ : ...
+### 2026-11-07 : Alignement sur l'objectif du sprint 1 : saisie des joueurs, format de backlog de l'énoncé, révélation des votes (US-04, US-06)
+
+- **Demande (résumé fidèle)** : fournir l'énoncé du sprint 1 et demander de s'y conformer : nombre de joueurs et pseudos, backlog `projet` / `fonctionnalites`, affichage de la première fonctionnalité, vote caché puis révélation.
+- **Résultat** : <accepté tel quel / modifié / rejeté>
+- **Ce que nous avons vérifié** : <à compléter>
+- **Ce que nous avons changé ou rejeté, et pourquoi** : <à compléter>
+
+### 2026-11-21 : Workflow CI GitHub Actions (R2)
+
+- **Demande (résumé fidèle)** : écrire .github/workflows/ci.yml (push et PR vers main, installation, pytest), plus des explications sur la CI, les PR et le badge.
+- **Résultat** : <accepté tel quel / modifié>
+- **Ce que nous avons vérifié** : <ex. : run dans l'onglet Actions, vert ou rouge>
+- **Ce que nous avons changé ou rejeté, et pourquoi** : <ex. : commentaires du YAML réécrits avec nos mots>
 
 ## Bilan (à compléter en séance 4, 3 lignes)
 
