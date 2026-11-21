@@ -38,7 +38,7 @@ Fichier d'instructions pour agent versionné (`CLAUDE.md`, `AGENTS.md`...) : non
 
 - **Demande (résumé fidèle)** : écrire .github/workflows/ci.yml (push et PR vers main, installation, pytest), plus des explications sur la CI, les PR et le badge.
 - **Résultat** : <modifié>
-- **Ce que nous avons vérifié** : <Nous avons vérifier le run dans l'onglet Actions, et nous avons trouvé en rouge>
+- **Ce que nous avons vérifié** : <Nous avons vérifier le run dans l'onglet Actions, et nous avons trouvé en rouge comme l'a demandé l'enseignant>
 - **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons changer les commentaires du YAML en les réecrivant avec nos mots>
 
 ## Bilan (à compléter en séance 4, 3 lignes)
