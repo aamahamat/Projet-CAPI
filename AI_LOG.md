@@ -14,7 +14,7 @@
 ### 2026-11-20 : Table de décision puis tests
 
 - **Demande (résumé fidèle)** : *******************************
-- **Résultat** : <modifié>
+- **Résultat** : **********************************************
 - **Ce que nous avons vérifié** : *******************************
 - **Ce que nous avons changé ou rejeté, et pourquoi** : *************************************
 
