@@ -27,12 +27,19 @@ Fichier d'instructions pour agent versionné (`CLAUDE.md`, `AGENTS.md`...) : non
 - **Ce que nous avons vérifié** : <à compléter>
 - **Ce que nous avons changé ou rejeté, et pourquoi** : <à compléter>
 
+### 2026-11-20 : Table de décision puis tests
+
+- **Demande (résumé fidèle)** : *******************************
+- **Résultat** : <modifié>
+- **Ce que nous avons vérifié** : *******************************
+- **Ce que nous avons changé ou rejeté, et pourquoi** : *************************************
+
 ### 2026-11-21 : Workflow CI GitHub Actions (R2)
 
 - **Demande (résumé fidèle)** : écrire .github/workflows/ci.yml (push et PR vers main, installation, pytest), plus des explications sur la CI, les PR et le badge.
-- **Résultat** : <accepté tel quel / modifié>
-- **Ce que nous avons vérifié** : <ex. : run dans l'onglet Actions, vert ou rouge>
-- **Ce que nous avons changé ou rejeté, et pourquoi** : <ex. : commentaires du YAML réécrits avec nos mots>
+- **Résultat** : <modifié>
+- **Ce que nous avons vérifié** : <Nous avons vérifier le run dans l'onglet Actions, et nous avons trouvé en rouge>
+- **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons changer les commentaires du YAML en les réecrivant avec nos mots>
 
 ## Bilan (à compléter en séance 4, 3 lignes)
 
