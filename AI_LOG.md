@@ -7,25 +7,9 @@
 
 | Outil | Modèle (si connu) | Mode (autocomplétion, chat, agent) |
 |---|---|---|
-| Claude | Sonnet 5.5 | Mode chat |
-
-Fichier d'instructions pour agent versionné (`CLAUDE.md`, `AGENTS.md`...) : non
+| Claude | Sonnet 5.5 | Mode chat | Fichier d'instructions pour agent versionné (`CLAUDE.md`, `AGENTS.md`...) : non
 
 ## Entrées
-
-### 2026-11-07 : Squelette Flask, chargement du backlog JSON et choix d'une carte (US-04, US-06)
-
-- **Demande (résumé fidèle)** : implémenter US-04 et US-06 avec Flask, à partir de R0.md et R1.md (CU-01 extension 2a, CU-02 étape 1). Aucun code existant fourni.
-- **Résultat** : <accepté tel quel / modifié / rejeté>
-- **Ce que nous avons vérifié** : <ex. : pytest (71 tests), essai manuel dans le navigateur, lecture ligne à ligne>
-- **Ce que nous avons changé ou rejeté, et pourquoi** : <ce que vous avez modifié et la raison, ou « rien »>
-
-### 2026-11-07 : Alignement sur l'objectif du sprint 1 : saisie des joueurs, format de backlog de l'énoncé, révélation des votes (US-04, US-06)
-
-- **Demande (résumé fidèle)** : fournir l'énoncé du sprint 1 et demander de s'y conformer : nombre de joueurs et pseudos, backlog `projet` / `fonctionnalites`, affichage de la première fonctionnalité, vote caché puis révélation.
-- **Résultat** : <accepté tel quel / modifié / rejeté>
-- **Ce que nous avons vérifié** : <à compléter>
-- **Ce que nous avons changé ou rejeté, et pourquoi** : <à compléter>
 
 ### 2026-11-20 : Table de décision puis tests
 
