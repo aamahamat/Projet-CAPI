@@ -29,7 +29,7 @@
 
 - **Demande (résumé fidèle)** : nous avons implémenter 'src/capi/regles.py' ('evaluer_vote', règles strict, médiane, moyenne, majorités) à partir de nos tests 'tests/test_integration.py', fournis comme spécification avec interdiction de les modifier ; puis brancher le moteur dans `partie.py` et `routes.py` (verdict après révélation, nouveau tour, fonctionnalité suivante, choix de la règle) et nous avons enfin mis à jour la page web.
 - **Résultat** : <légèrement modifié>
-- **Ce que nous avons vérifié** : <'py -m pytest' en local, nous donne 92 tests réussis ; CI verte (lien du run dans R2) ; essai manuel d'une partie : désaccord au tour 1, validation à la médiane au tour 2 ; lecture ligne à ligne de regles.py par le copilote>
+- **Ce que nous avons vérifié** : <Nous avons testé 'py -m pytest' en local, nous donne 92 tests réussis ; CI verte (lien du run dans R2) ; essai manuel d'une partie : désaccord au tour 1, validation à la médiane au tour 2 ; lecture ligne à ligne de regles.py par le copilote>
 - **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons gardé test_integration.py dans tests parce qu'il contient les fonctions de nos CA »>
 
 ## Bilan (à compléter en séance 4, 3 lignes)
