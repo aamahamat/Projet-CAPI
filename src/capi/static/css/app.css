@@ -1,0 +1,103 @@
+/* Style complémentaire à Bootstrap 5.
+   Les couleurs viennent des variables Bootstrap (--bs-*) : le thème sombre est donc gratuit. */
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--bs-primary-bg-subtle), var(--bs-body-bg) 320px) no-repeat;
+}
+
+/* ---------- Message flottant ---------- */
+.alert-flottante {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1080;
+  min-width: min(90vw, 24rem);
+  text-align: center;
+  box-shadow: 0 .5rem 1.5rem rgb(0 0 0 / .2);
+}
+
+/* ---------- Indicateur d'étapes ---------- */
+.stepper { display: flex; gap: .5rem; padding: 0; margin: 0 0 1.5rem; }
+.stepper li { flex: 1; }
+.stepper button {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .55rem .5rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-pill);
+  background: var(--bs-body-bg);
+  color: var(--bs-secondary-color);
+  font-weight: 600; font-size: .9rem;
+}
+.stepper button:disabled { opacity: .5; }
+.stepper-num {
+  width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  display: inline-grid; place-items: center;
+  background: var(--bs-secondary-bg); font-size: .8rem;
+}
+.stepper button.est-fait .stepper-num { background: var(--bs-success); color: #fff; }
+.stepper button.est-actif {
+  border-color: var(--bs-primary); color: var(--bs-primary-text-emphasis);
+  background: var(--bs-primary-bg-subtle);
+}
+.stepper button.est-actif .stepper-num { background: var(--bs-primary); color: #fff; }
+/* Sur petit écran, seul le libellé de l'étape active reste visible. */
+@media (max-width: 480px) {
+  .stepper button:not(.est-actif) .libelle { display: none; }
+}
+
+/* ---------- Cartes de poker ---------- */
+.cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+  gap: .85rem;
+}
+.carte-poker {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  display: grid; place-items: center;
+  border: 2px solid var(--bs-primary);
+  border-radius: .9rem;
+  background: var(--bs-body-bg);
+  color: var(--bs-primary);
+  font-size: 1.7rem; font-weight: 700;
+  box-shadow: 0 2px 6px rgb(0 0 0 / .12);
+  transition: transform .15s, box-shadow .15s, background-color .15s;
+}
+/* Petit repère dans le coin, comme sur une vraie carte. */
+.carte-poker::before {
+  content: attr(data-coin);
+  position: absolute; top: .35rem; left: .5rem;
+  font-size: .7rem; opacity: .7;
+}
+button.carte-poker { cursor: pointer; }
+button.carte-poker:hover:not(:disabled) {
+  transform: translateY(-6px);
+  box-shadow: 0 .6rem 1rem rgb(0 0 0 / .2);
+  background: var(--bs-primary-bg-subtle);
+}
+button.carte-poker:active:not(:disabled) { transform: translateY(-2px) scale(.97); }
+button.carte-poker:focus-visible { outline: 3px solid var(--bs-primary); outline-offset: 3px; }
+button.carte-poker:disabled { opacity: .5; cursor: not-allowed; }
+
+/* « ? » et café : cartes spéciales, bord en pointillés. */
+.carte-speciale { border-style: dashed; color: var(--bs-secondary-color); border-color: var(--bs-secondary-color); }
+
+/* Carte révélée : pleine couleur, avec une petite animation de retournement. */
+.carte-revelee {
+  background: var(--bs-primary); color: #fff; border-color: var(--bs-primary);
+  animation: retourner .5s ease both;
+}
+@keyframes retourner {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to   { transform: none;           opacity: 1; }
+}
+.resultat { text-align: center; }
+.resultat-nom { margin-top: .5rem; font-weight: 600; word-break: break-word; }
+
+/* Respect des préférences d'accessibilité : pas d'animation si l'utilisateur les réduit. */
+@media (prefers-reduced-motion: reduce) {
+  .carte-poker, .carte-revelee { transition: none; animation: none; }
+}

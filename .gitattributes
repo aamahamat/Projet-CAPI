@@ -1,0 +1,2 @@
+# Évite que Git signale tous les fichiers comme modifiés à cause des fins de ligne Windows (CRLF).
+* text=auto eol=lf

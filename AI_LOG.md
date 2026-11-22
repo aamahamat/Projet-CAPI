@@ -11,13 +11,6 @@
 
 ## Entrées
 
-### 2026-11-20 : Table de décision puis tests
-
-- **Demande (résumé fidèle)** : *******************************
-- **Résultat** : **********************************************
-- **Ce que nous avons vérifié** : *******************************
-- **Ce que nous avons changé ou rejeté, et pourquoi** : *************************************
-
 ### 2026-11-21 : Workflow CI GitHub Actions (R2)
 
 - **Demande (résumé fidèle)** : écrire .github/workflows/ci.yml (push et PR vers main, installation, pytest), plus des explications sur la CI, les PR et le badge.
@@ -29,11 +22,18 @@
 
 - **Demande (résumé fidèle)** : nous avons implémenter 'src/capi/regles.py' ('evaluer_vote', règles strict, médiane, moyenne, majorités) à partir de nos tests 'tests/test_integration.py', fournis comme spécification avec interdiction de les modifier ; puis brancher le moteur dans `partie.py` et `routes.py` (verdict après révélation, nouveau tour, fonctionnalité suivante, choix de la règle) et nous avons enfin mis à jour la page web.
 - **Résultat** : <légèrement modifié>
-- **Ce que nous avons vérifié** : <Nous avons testé 'py -m pytest' en local, nous donne 92 tests réussis ; CI verte (lien du run dans R2) ; essai manuel d'une partie : désaccord au tour 1, validation à la médiane au tour 2 ; lecture ligne à ligne de regles.py par le copilote>
+- **Ce que nous avons vérifié** : <Nous avons testé 'py -m pytest' en local, nous donne 92 tests réussis ; CI verte (lien du run dans R2) ; lecture ligne à ligne de regles.py par le copilote>
 - **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons gardé test_integration.py dans tests parce qu'il contient les fonctions de nos CA »>
+
+### 2026-11-21 : Modification interface(app.js/app.css)
+
+- **Demande (résumé fidèle)** : Modifie le l'interface de l'application afin que ce soit plus ergonimique
+- **Résultat** : <legerement modifié>
+- **Ce que nous avons vérifié** : <Nous avons verifié que le workflow n'a pas changé et que la logique derriere reste la meme>
+- **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons changer les couleurs et les positions car les couleurs ne correspondaient pas et le contraste ne tenait pas>
 
 ## Bilan (à compléter en séance 4, 3 lignes)
 
-- Nombre d'entrées et de propositions rejetées ou corrigées :
-- Tâches où l'IA a fait gagner du temps :
+- Nombre d'entrées et de propositions rejetées ou corrigées : 
+- Tâches où l'IA a fait gagner du temps : 
 - Tâches où l'IA a fait perdre du temps :

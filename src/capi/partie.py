@@ -151,34 +151,39 @@ class Partie:
 
     # --- Vue publique ------------------------------------------------
     def etat(self):
-        """Les valeurs des votes ne sont exposées qu'après la révélation."""
-        return {
-            "projet": self.projet,
-            "fonctionnalite": self.fonctionnalite_courante(),
-            "numero": self.index_courant + 1 if self.fonctionnalites else None,
-            "total": len(self.fonctionnalites),
-            "cartes": list(CARTES),
-            "joueurs": [
-                {"nom": nom, "a_vote": nom in self.votes} for nom in self.joueurs
-            ],
-            "revele": self.revele,
-            "votes": (
-                {nom: self.votes[nom] for nom in self.joueurs} if self.revele else None
-            ),
-            "regle": self.regle,
-            "regles": sorted(REGLES),
-            "tour": self.tour,
-            "terminee": self.terminee,
-            "resultat": (
-                {
-                    "valide": self.resultat.statut,
-                    "valeur": self.resultat.valeur_choisie,
-                    "motif": self.resultat.motif,
-                }
-                if self.revele
-                else None
-            ),
-        }
+            """Les valeurs des votes ne sont exposées qu'après la révélation."""
+            return {
+                "projet": self.projet,
+                "fonctionnalite": self.fonctionnalite_courante(),
+                "numero": self.index_courant + 1 if self.fonctionnalites else None,
+                "total": len(self.fonctionnalites),
+                "cartes": list(CARTES),
+                "joueurs": [
+                    {"nom": nom, "a_vote": nom in self.votes} for nom in self.joueurs
+                ],
+                "revele": self.revele,
+                "votes": (
+                    {nom: self.votes[nom] for nom in self.joueurs} if self.revele else None
+                ),
+                "regle": self.regle,
+                "regles": sorted(REGLES),
+                "tour": self.tour,
+                "terminee": self.terminee,
+                # Vue d'ensemble du backlog (sert au récapitulatif de fin de partie).
+                "estimations": [
+                    {"id": f["id"], "titre": f["titre"], "difficulte": f.get("difficulte")}
+                    for f in self.fonctionnalites
+                ],
+                "resultat": (
+                    {
+                        "valide": self.resultat.statut,
+                        "valeur": self.resultat.valeur_choisie,
+                        "motif": self.resultat.motif,
+                    }
+                    if self.revele
+                    else None
+                ),
+            }
 
     def _reinitialiser_votes(self):
         self.votes = {}

@@ -1,150 +1,168 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CAPI – Planning poker</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; }
-    section { border: 1px solid #ccc; border-radius: .5rem; padding: 1rem; margin-bottom: 1rem; }
-    button.carte { min-width: 3.5rem; padding: .8rem .4rem; margin: .2rem; font-size: 1.1rem; cursor: pointer; }
-    #message { font-weight: bold; min-height: 1.5rem; }
-    .erreur { color: #b00020; } .ok { color: #1b5e20; }
-    #pseudos input { display: block; margin: .3rem 0; }
-    table { border-collapse: collapse; } td, th { border: 1px solid #ccc; padding: .3rem .8rem; }
-  </style>
+
+  {# Applique le thème (clair / sombre) avant l'affichage pour éviter un flash blanc. #}
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem("theme"); } catch (e) {}
+      if (!theme) theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-bs-theme", theme);
+    })();
+  </script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-  <h1>CAPI – Planning poker</h1>
-  <p id="message" role="status"></p>
 
-  <section>
-    <h2>1. Joueurs</h2>
-    <label>Nombre de joueurs :
-      <input type="number" id="nombre" min="2" max="10" value="3">
-    </label>
-    <button id="generer">Saisir les pseudos</button>
-    <div id="pseudos"></div>
-    <button id="valider-joueurs" hidden>Valider les joueurs</button>
-    <ul id="joueurs"></ul>
-  </section>
+  <nav class="navbar bg-body-tertiary border-bottom">
+    <div class="container" style="max-width: 860px">
+      <span class="navbar-brand fw-bold mb-0">
+        <span class="text-primary" aria-hidden="true">♠</span> CAPI
+        <small class="text-body-secondary fw-normal d-none d-sm-inline">Planning poker</small>
+      </span>
+      <button id="theme-toggle" type="button" class="btn btn-outline-secondary btn-sm"
+              aria-label="Changer de thème clair ou sombre">🌓</button>
+    </div>
+  </nav>
 
-  <section>
-    <h2>2. Backlog</h2>
-    <input type="file" id="fichier" accept=".json,application/json">
-    <button id="charger">Charger</button>
-    <p id="fonctionnalite">Aucun backlog chargé.</p>
-    <label>Règle de validation (à partir du tour 2) :
-      <select id="regle"></select>
-    </label>
-  </section>
+  <main class="container py-4" style="max-width: 860px">
 
-  <section>
-    <h2>3. Vote</h2>
-    <p>Chaque joueur vote à son tour sur cet appareil : choisissez votre pseudo, puis votre carte.</p>
-    <label>Joueur : <select id="choix-joueur"></select></label>
-    <div id="cartes"></div>
-    <button id="reveler">Révéler les votes</button>
-    <table id="resultat" hidden></table>
-    <p id="verdict"></p>
-    <button id="continuer" hidden>Continuer</button>
-  </section>
+    {# Message flottant (succès ou erreur), géré par app.js. #}
+    <div id="alerte" class="alert alert-flottante d-none" role="status" aria-live="polite"></div>
 
-<script>
-const msg = document.getElementById("message");
-function afficher(texte, ok) { msg.textContent = texte; msg.className = ok ? "ok" : "erreur"; }
-const JSON_HEADERS = {"Content-Type": "application/json"};
+    {# Indicateur d'étapes : cliquable pour revenir en arrière. #}
+    <ol id="stepper" class="stepper list-unstyled" aria-label="Étapes de la partie">
+      <li><button type="button" data-etape="1"><span class="stepper-num">1</span><span class="libelle">Joueurs</span></button></li>
+      <li><button type="button" data-etape="2"><span class="stepper-num">2</span><span class="libelle">Backlog</span></button></li>
+      <li><button type="button" data-etape="3"><span class="stepper-num">3</span><span class="libelle">Vote</span></button></li>
+    </ol>
 
-async function appel(url, options) {
-  const rep = await fetch(url, options);
-  const data = await rep.json();
-  afficher(data.erreur || data.message || "", rep.ok);
-  await rafraichir();
-  return rep.ok;
-}
+    <!-- ÉTAPE 1 : joueurs -->
+    <section id="etape-1" class="card shadow-sm" hidden>
+      <form id="form-joueurs" class="card-body p-4">
+        <h1 class="h3">Qui joue ?</h1>
+        <p class="text-body-secondary">Choisissez le nombre de joueurs, puis donnez un pseudo à chacun.</p>
 
-async function rafraichir() {
-  const etat = await (await fetch("/api/etat")).json();
+        <label for="nombre" class="form-label">Nombre de joueurs</label>
+        <div class="input-group mb-3" style="max-width: 11rem">
+          <button id="moins" type="button" class="btn btn-outline-secondary" aria-label="Un joueur de moins">−</button>
+          <input id="nombre" type="number" class="form-control text-center" min="2" max="10" value="3">
+          <button id="plus" type="button" class="btn btn-outline-secondary" aria-label="Un joueur de plus">+</button>
+        </div>
 
-  const f = etat.fonctionnalite;
-  document.getElementById("fonctionnalite").textContent = f
-    ? `${etat.projet ? etat.projet + " – " : ""}Fonctionnalité ${etat.numero}/${etat.total} : ${f.id} – ${f.titre} (tour ${etat.tour})`
-      + (etat.terminee ? " – backlog entièrement estimé" : "")
-    : "Aucun backlog chargé.";
+        {# Les champs « pseudo » sont générés par app.js. #}
+        <div id="pseudos" class="row g-3 mb-4"></div>
 
-  const regle = document.getElementById("regle"); regle.replaceChildren();
-  for (const nom of etat.regles) {
-    const opt = document.createElement("option"); opt.value = opt.textContent = nom;
-    opt.selected = nom === etat.regle; regle.append(opt);
-  }
+        {# Les options de la règle viennent du serveur : une règle ajoutée dans regles.py apparaît seule. #}
+        <label for="regle" class="form-label">Règle de validation</label>
+        <select id="regle" class="form-select mb-1" aria-describedby="aide-regle"></select>
+        <p id="aide-regle" class="form-text mb-4">
+          Au premier tour de chaque fonctionnalité, l'unanimité est toujours requise.
+          La règle choisie s'applique à partir du deuxième tour.
+        </p>
 
-  const ul = document.getElementById("joueurs"); ul.replaceChildren();
-  const sel = document.getElementById("choix-joueur"); const courant = sel.value; sel.replaceChildren();
-  for (const j of etat.joueurs) {
-    const li = document.createElement("li");
-    li.textContent = `${j.nom} ${j.a_vote ? "✓ a voté" : "…"}`; ul.append(li);
-    const opt = document.createElement("option"); opt.value = opt.textContent = j.nom; sel.append(opt);
-  }
-  if (courant) sel.value = courant;
+        <button type="submit" class="btn btn-primary btn-lg w-100">Valider les joueurs</button>
+      </form>
+    </section>
 
-  const div = document.getElementById("cartes"); div.replaceChildren();
-  for (const c of etat.cartes) {
-    const b = document.createElement("button");
-    b.className = "carte"; b.textContent = c === "cafe" ? "☕" : c;
-    b.disabled = etat.revele;
-    b.onclick = () => appel("/api/vote", {
-      method: "POST", headers: JSON_HEADERS,
-      body: JSON.stringify({joueur: sel.value, carte: c}),
-    });
-    div.append(b);
-  }
+    <!-- ÉTAPE 2 : backlog -->
+    <section id="etape-2" class="card shadow-sm" hidden>
+      <form id="form-backlog" class="card-body p-4">
+        <h1 class="h3">Chargez le backlog</h1>
+        <p class="text-body-secondary">Un fichier JSON qui liste les fonctionnalités à estimer.</p>
 
-  const table = document.getElementById("resultat");
-  table.hidden = !etat.revele; table.replaceChildren();
-  if (etat.revele) {
-    for (const [nom, carte] of Object.entries(etat.votes)) {
-      const tr = table.insertRow();
-      tr.insertCell().textContent = nom;
-      tr.insertCell().textContent = carte === "cafe" ? "☕" : carte;
-    }
-  }
+        <label for="fichier" class="form-label">Fichier du backlog (.json)</label>
+        <input id="fichier" type="file" class="form-control mb-3" accept=".json,application/json" required>
 
-  const r = etat.resultat;
-  document.getElementById("verdict").textContent = r
-    ? (r.valide ? `Validé : ${r.valeur}. ` : "Nouveau tour. ") + r.motif
-    : "";
-  const suite = document.getElementById("continuer");
-  suite.hidden = !etat.revele || etat.terminee;
-  suite.textContent = r && r.valide ? "Fonctionnalité suivante" : "Nouveau tour";
-}
+        <details class="mb-4 text-body-secondary">
+          <summary>Quel format ?</summary>
+<pre class="mt-2 small bg-body-secondary rounded p-3 mb-0">{
+  "projet": "Bibliothèque en ligne",
+  "fonctionnalites": [
+    { "id": "F1", "titre": "Rechercher un livre par titre" }
+  ]
+}</pre>
+        </details>
 
-document.getElementById("generer").onclick = () => {
-  const n = parseInt(document.getElementById("nombre").value, 10) || 0;
-  const zone = document.getElementById("pseudos"); zone.replaceChildren();
-  for (let i = 1; i <= n; i++) {
-    const input = document.createElement("input");
-    input.placeholder = `Pseudo du joueur ${i}`; zone.append(input);
-  }
-  document.getElementById("valider-joueurs").hidden = n === 0;
-};
-document.getElementById("valider-joueurs").onclick = () => {
-  const pseudos = [...document.querySelectorAll("#pseudos input")].map(i => i.value);
-  appel("/api/joueurs", {
-    method: "POST", headers: JSON_HEADERS,
-    body: JSON.stringify({nombre: pseudos.length, pseudos}),
-  });
-};
-document.getElementById("charger").onclick = () => {
-  const fichier = document.getElementById("fichier").files[0];
-  const form = new FormData(); if (fichier) form.append("fichier", fichier);
-  appel("/api/backlog", {method: "POST", body: form});
-};
-document.getElementById("reveler").onclick = () => appel("/api/revelation", {method: "POST"});
-document.getElementById("continuer").onclick = () => appel("/api/suite", {method: "POST"});
-document.getElementById("regle").onchange = (e) => appel("/api/regle", {
-  method: "POST", headers: JSON_HEADERS, body: JSON.stringify({regle: e.target.value}),
-});
-rafraichir();
-</script>
+        <button type="submit" class="btn btn-primary btn-lg w-100">Charger le backlog</button>
+      </form>
+    </section>
+
+    <!-- ÉTAPE 3 : vote -->
+    <section id="etape-3" hidden>
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex gap-2 align-items-center">
+              <span id="feature-id" class="badge text-bg-primary"></span>
+              <span id="badge-tour" class="badge text-bg-secondary"></span>
+            </div>
+            <span id="feature-position" class="small text-body-secondary"></span>
+          </div>
+          <p id="projet" class="small text-body-secondary mb-1"></p>
+          <h1 id="feature-titre" class="h3 mb-2"></h1>
+          <p id="info-regle" class="small text-body-secondary mb-3"></p>
+          <div class="progress" style="height: .5rem" role="progressbar" aria-label="Avancement du backlog"
+               aria-valuemin="0" aria-valuemax="100">
+            <div id="barre-feature" class="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      {# zone-jeu : tout ce qui sert à voter. Masquée quand le backlog est terminé. #}
+      <div id="zone-jeu">
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h2 class="h5">Joueurs</h2>
+          <div id="joueurs" class="d-flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <div id="zone-vote" class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h2 id="titre-vote" class="h5 mb-1"></h2>
+          <p class="small text-body-secondary mb-3">Les votes restent cachés jusqu'à la révélation. Passez l'appareil au joueur suivant.</p>
+          <div id="cartes" class="cartes"></div>
+        </div>
+      </div>
+
+      <div id="zone-reveler" class="d-grid mb-4">
+        <button id="reveler" type="button" class="btn btn-success btn-lg"></button>
+      </div>
+
+      <div id="zone-resultats" class="card shadow-sm" hidden>
+        <div class="card-body p-4">
+          <h2 class="h5 mb-3">Votes révélés</h2>
+          <div id="resultats" class="cartes mb-4"></div>
+          {# Verdict du moteur de règles : validé ou revote, avec le motif. #}
+          <div id="verdict" class="alert mb-3" role="status"></div>
+          <div class="d-grid">
+            <button id="continuer" type="button" class="btn btn-primary btn-lg"></button>
+          </div>
+        </div>
+      </div>
+
+      </div>{# fin de zone-jeu #}
+
+      <div id="zone-fin" class="card shadow-sm" hidden>
+        <div class="card-body p-4">
+          <h2 class="h4">🎉 Backlog entièrement estimé</h2>
+          <p class="text-body-secondary">Voici la difficulté retenue pour chaque fonctionnalité.</p>
+          <ul id="recap" class="list-group"></ul>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
