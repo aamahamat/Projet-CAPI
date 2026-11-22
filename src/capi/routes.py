@@ -65,8 +65,23 @@ def voter():
     return jsonify(message="Vote enregistré."), 200
 
 
+@bp.post("/api/regle")
+def choisir_regle():
+    """US-02 : l'organisateur choisit la règle de validation."""
+    donnees = _corps_json('{"regle": "mediane"}')
+    _partie().configurer_regle(donnees.get("regle"))
+    return jsonify(message="Règle enregistrée."), 200
+
+
 @bp.post("/api/revelation")
 def reveler():
-    """Révèle les votes une fois que tous les joueurs ont voté."""
+    """Révèle les votes (tous ont voté) et applique la règle de validation."""
     _partie().reveler()
     return jsonify(message="Votes révélés."), 200
+
+
+@bp.post("/api/suite")
+def continuer():
+    """Après révélation : fonctionnalité suivante si validée, sinon nouveau tour."""
+    _partie().continuer()
+    return jsonify(message="Suite de la partie."), 200
