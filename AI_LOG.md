@@ -18,19 +18,19 @@
 - **Ce que nous avons vérifié** : <Nous avons vérifier le run dans l'onglet Actions, et nous avons trouvé en rouge comme l'a demandé l'enseignant>
 - **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons changer les commentaires du YAML en les réecrivant avec nos mots>
 
+- ### 2026-11-21 : Modification interface(app.js/app.css)
+
+- **Demande (résumé fidèle)** : Modifie le l'interface de l'application afin que ce soit plus ergonimique
+- **Résultat** : <legerement modifié>
+- **Ce que nous avons vérifié** : <Nous avons verifié que le workflow n'a pas changé et que la logique derriere reste la meme>
+- **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons changer les couleurs et les positions car les couleurs ne correspondaient pas et le contraste ne tenait pas>
+
 ### 2026-11-22 : Moteur de règles de validation et intégration dans la boucle de vote (US-01, US-02, US-03)
 
 - **Demande (résumé fidèle)** : nous avons implémenter 'src/capi/regles.py' ('evaluer_vote', règles strict, médiane, moyenne, majorités) à partir de nos tests 'tests/test_integration.py', fournis comme spécification avec interdiction de les modifier ; puis brancher le moteur dans `partie.py` et `routes.py` (verdict après révélation, nouveau tour, fonctionnalité suivante, choix de la règle) et nous avons enfin mis à jour la page web.
 - **Résultat** : <légèrement modifié>
 - **Ce que nous avons vérifié** : <Nous avons testé 'py -m pytest' en local, nous donne 92 tests réussis ; CI verte (lien du run dans R2) ; lecture ligne à ligne de regles.py par le copilote>
 - **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons gardé test_integration.py dans tests parce qu'il contient les fonctions de nos CA »>
-
-### 2026-11-21 : Modification interface(app.js/app.css)
-
-- **Demande (résumé fidèle)** : Modifie le l'interface de l'application afin que ce soit plus ergonimique
-- **Résultat** : <legerement modifié>
-- **Ce que nous avons vérifié** : <Nous avons verifié que le workflow n'a pas changé et que la logique derriere reste la meme>
-- **Ce que nous avons changé ou rejeté, et pourquoi** : <nous avons changer les couleurs et les positions car les couleurs ne correspondaient pas et le contraste ne tenait pas>
 
 ## Bilan (à compléter en séance 4, 3 lignes)
 
